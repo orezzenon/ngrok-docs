@@ -6,11 +6,14 @@ const toReplace = (to) => (path, from) => path.replace(from, to)            // a
 // List of redirects
 //  String values are treated as exacts by default.
 //  Exact matches should be listed first as redirects are stacked
-// 
+//
 // To change behavior you can use the following method structures:
 //  [0 - from]: (path) => [matchStr, boolean (true for match, false for do not match)]
 //  [1 - to]:  (path, from) => string (returned value becomes the new path)
 const redirects = [
+    // exact matches
+    [ fromExact(`/docs/network-edge/pops`), `/docs/network-edge/pops/` ],
+
     [ fromIncludes(`/docs/1`), `/docs/` ],
     [ fromIncludes(`/docs/2`), `/docs/` ],
     [ fromIncludes(`/docs/ngrok-link`), `/docs/network-edge/` ],
@@ -21,7 +24,6 @@ const redirects = [
     [ fromIncludes(`/docs/platform/events`), `/docs/events/` ],
     [ fromIncludes(`/docs/events/filtering`), `/docs/events/#filters` ],
     [ fromIncludes(`/docs/http-header-templates/`), `/docs/network-edge/http-header-templates/` ],
-    [ fromIncludes(`/docs/network-edge/pops`), `/docs/network-edge/pops/` ],
     [ fromIncludes(`/docs/platform/pops`), `/docs/network-edge/pops/` ],
     [ fromIncludes(`/docs/best-practices/security-dev-productivity/`), `/docs/guides/security-dev-productivity/` ],
     [ fromIncludes(`/docs/platform/ip-policies/`), `/docs/network-edge/ip-policies/` ],
@@ -147,6 +149,8 @@ for (const redirect of redirects) {
 }
 
 // redirect when the path has changed
-if (newPath != currentPath) {
+if (newPath != currentPath || newPath == window.location.pathname) {
     window.location.href = newPath
+} else {
+    console.error(`ignoring redirect from ${window.location.href} to ${newPath}; looks loopy`)
 }
